@@ -10,8 +10,14 @@ you'll see a lot of satellite images being displayed. It's planned that in the
 future there will also be other matadata records.
 
 
-Running
--------
+Demo
+----
+
+See it in action at https://vmx.github.io/matadata-viewer/.
+
+
+Running locally
+---------------
 
 ### Web viewer
 
