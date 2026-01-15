@@ -11,6 +11,14 @@ const subscription = startStream(startTime)
 const stream = consumeStream(subscription)
 
 for await (const record of stream) {
+  // Remove initial text node from div.
+  if (
+    recordsElement.length === 1 &&
+    recordsElement.firstChild.nodeType === Node.TEXT_NODE
+  ) {
+    recordsElement.firstChild.remove()
+  }
+
   console.log(JSON.stringify(record))
   const recordElement = document
     .getElementById("record-template")
