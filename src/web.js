@@ -49,4 +49,3 @@ for await (const record of stream) {
     recordsElement.lastElementChild.remove()
   }
 }
-console.log("Stop streaming, enough items were streamed")
