@@ -23,9 +23,26 @@ for await (const record of stream) {
   const recordElement = document
     .getElementById("record-template")
     .content.cloneNode(true)
-  recordElement.querySelector("img").src = record.preview.url
+
+  const previewElement = recordElement.querySelector("div.preview")
+
+  // Each record contains a link to the metadata
   recordElement.querySelector("a").href = record.metadata
   recordElement.querySelector("a").textContent = record.metadata
+
+  // If the there is a preview and it's an image, show it.
+  if (
+    record.preview !== undefined &&
+    record.preview.mimeType.startsWith("image/")
+  ) {
+    const imageElement = document
+      .getElementById("record-template-preview-image")
+      .content.querySelector("img")
+      .cloneNode(true)
+    imageElement.src = record.preview.url
+    previewElement.prepend(imageElement)
+  }
+
   recordsElement.prepend(recordElement)
 
   if (recordsElement.children.length > MAX_ITEMS) {
