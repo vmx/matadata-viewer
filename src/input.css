@@ -4,26 +4,19 @@
 
 /* Custom animations */
 @layer utilities {
-  @keyframes ellipsis-animation {
-    0% {
-      clip-path: inset(0 100% 0 0);
-    }
-    25% {
-      clip-path: inset(0 66.6% 0 0);
+  @keyframes pulse-dot {
+    0%,
+    100% {
+      opacity: 1;
+      transform: scale(1);
     }
     50% {
-      clip-path: inset(0 33.3% 0 0);
-    }
-    75% {
-      clip-path: inset(0 0 0 0);
+      opacity: 0.5;
+      transform: scale(1.1);
     }
   }
 
-  .loading-ellipsis:after {
-    overflow: hidden;
-    display: inline-block;
-    vertical-align: bottom;
-    animation: ellipsis-animation steps(1, end) 2s infinite;
-    content: "\2026";
+  .pulse-dot {
+    animation: pulse-dot 2s ease-in-out infinite;
   }
 }
