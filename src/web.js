@@ -9,6 +9,52 @@ const statusMessage = document.getElementById("status-message")
 const recordCount = document.getElementById("record-count")
 
 let recordsReceived = 0
+let map = null
+let geoJsonLayer = null
+let mapEnabled = true
+
+const mapToggle = document.getElementById("map-toggle")
+const mapContainer = document.getElementById("map-container")
+
+function initMap() {
+  if (map) return
+  map = L.map("map").setView([0, 0], 2)
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    attribution: "&copy; OpenStreetMap contributors",
+  }).addTo(map)
+  geoJsonLayer = L.geoJSON(null, {
+    style: { color: "#2563eb", weight: 2, fillOpacity: 0.15 },
+  }).addTo(map)
+}
+
+mapToggle.addEventListener("change", () => {
+  mapEnabled = mapToggle.checked
+  if (mapEnabled) {
+    mapContainer.classList.remove("hidden")
+    initMap()
+    // Leaflet needs a size recalc after becoming visible
+    setTimeout(() => map.invalidateSize(), 0)
+  } else {
+    mapContainer.classList.add("hidden")
+  }
+})
+
+// Initialize map on load if enabled by default
+if (mapEnabled) {
+  initMap()
+}
+
+function fetchAndPlotMetadata(url) {
+  if (!mapEnabled) return
+  fetch(url)
+    .then((res) => res.json())
+    .then((data) => {
+      if (!mapEnabled || !data.geometry?.coordinates) return
+      geoJsonLayer.addData(data.geometry)
+      map.fitBounds(geoJsonLayer.getBounds(), { padding: [20, 20] })
+    })
+    .catch(() => {})
+}
 
 // Update status indicator
 function updateStatus(status, message = "") {
@@ -62,7 +108,7 @@ for await (const record of stream) {
 
   // Each record contains a link to the metadata
   recordElement.querySelector("a").href = record.metadata
-  recordElement.querySelector("a").textContent = record.metadata
+  recordElement.querySelector("a").textContent = "Metadata"
 
   // If the there is a preview and it's an image, show it.
   if (
@@ -76,6 +122,8 @@ for await (const record of stream) {
     imageElement.src = record.preview.url
     previewElement.prepend(imageElement)
   }
+
+  fetchAndPlotMetadata(record.metadata)
 
   recordsElement.prepend(recordElement)
 
